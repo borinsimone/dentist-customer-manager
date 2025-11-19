@@ -29,7 +29,9 @@ export const Appointments = () => {
   const [currentDate, setCurrentDate] = useState(
     new Date()
   );
-  const [preselectedDate, setPreselectedDate] = useState<string | null>(null);
+  const [preselectedDate, setPreselectedDate] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     loadData();
@@ -141,7 +143,9 @@ export const Appointments = () => {
             currentDate={currentDate}
             onDateChange={setCurrentDate}
             onQuickView={setQuickViewAppointment}
-            onCreateAppointment={handleAddAppointmentForDate}
+            onCreateAppointment={
+              handleAddAppointmentForDate
+            }
           />
         ) : (
           <ListView
@@ -395,8 +399,10 @@ const CalendarView = ({
                   ? styles["other-month"]
                   : ""
               } ${dayInfo.isToday ? styles.today : ""}`}
-              onDoubleClick={() => onCreateAppointment(dayInfo.date)}
-              style={{ cursor: 'pointer' }}
+              onDoubleClick={() =>
+                onCreateAppointment(dayInfo.date)
+              }
+              style={{ cursor: "pointer" }}
               title="Doppio click per creare appuntamento"
             >
               <div className={styles["day-number"]}>
