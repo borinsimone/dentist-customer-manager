@@ -1,0 +1,65 @@
+@import "../../styles/variables";
+
+.button {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $border-radius-sm;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &.primary {
+    background-color: $primary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: $primary-hover;
+      transform: translateY(-1px);
+      box-shadow: $shadow-md;
+    }
+  }
+
+  &.secondary {
+    background-color: $bg-gray;
+    color: $text-primary;
+
+    &:hover:not(:disabled) {
+      background-color: darken($bg-gray, 5%);
+    }
+  }
+
+  &.success {
+    background-color: $success-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($success-color, 10%);
+    }
+  }
+
+  &.danger {
+    background-color: $danger-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($danger-color, 10%);
+    }
+  }
+
+  &.small {
+    padding: $spacing-xs $spacing-sm;
+    font-size: 0.85rem;
+  }
+
+  &.large {
+    padding: $spacing-md $spacing-xl;
+    font-size: 1rem;
+  }
+
+  &.full-width {
+    width: 100%;
+    justify-content: center;
+  }
+}

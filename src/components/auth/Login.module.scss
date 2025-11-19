@@ -1,0 +1,77 @@
+@import "../../styles/variables";
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    $primary-color 0%,
+    $primary-hover 100%
+  );
+}
+
+.login-card {
+  background-color: $bg-white;
+  padding: $spacing-2xl;
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: 400px;
+
+  h1 {
+    text-align: center;
+    color: $primary-color;
+    margin-bottom: $spacing-xs;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: $text-secondary;
+    margin-bottom: $spacing-xl;
+  }
+}
+
+.form-group {
+  margin-bottom: $spacing-lg;
+
+  label {
+    display: block;
+    margin-bottom: $spacing-sm;
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  input {
+    width: 100%;
+  }
+}
+
+.error-message {
+  background-color: rgba($danger-color, 0.1);
+  color: $danger-color;
+  padding: $spacing-md;
+  border-radius: $border-radius-sm;
+  margin-bottom: $spacing-md;
+  font-size: 0.9rem;
+}
+
+.demo-info {
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background-color: $primary-light;
+  border-radius: $border-radius-sm;
+  font-size: 0.85rem;
+
+  strong {
+    display: block;
+    margin-bottom: $spacing-xs;
+    color: $primary-color;
+  }
+
+  p {
+    margin: $spacing-xs 0;
+    color: $text-secondary;
+  }
+}

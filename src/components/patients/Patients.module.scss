@@ -1,0 +1,233 @@
+@import "../../styles/variables";
+
+.patients-page {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
+
+    .search-bar {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+
+      input {
+        width: 100%;
+        padding-left: 2.5rem;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: $spacing-md;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-muted;
+      }
+    }
+  }
+
+  .patients-grid {
+    display: grid;
+    gap: $spacing-md;
+  }
+
+  .patient-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: $spacing-lg;
+    align-items: center;
+    padding: $spacing-lg;
+    background-color: $bg-white;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
+    }
+
+    .patient-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(
+        135deg,
+        $primary-color 0%,
+        $primary-hover 100%
+      );
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .patient-info {
+      .patient-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: $spacing-xs;
+        color: $text-primary;
+      }
+
+      .patient-contact {
+        display: flex;
+        gap: $spacing-lg;
+        font-size: 0.9rem;
+        color: $text-secondary;
+
+        .contact-item {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+        }
+      }
+
+      .patient-notes {
+        margin-top: $spacing-sm;
+        font-size: 0.85rem;
+        color: $text-muted;
+        font-style: italic;
+      }
+    }
+
+    .patient-actions {
+      display: flex;
+      gap: $spacing-sm;
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: $spacing-2xl;
+    color: $text-muted;
+
+    .icon {
+      font-size: 4rem;
+      margin-bottom: $spacing-md;
+    }
+
+    h3 {
+      margin-bottom: $spacing-sm;
+    }
+  }
+}
+
+// Modal styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  background-color: $bg-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+
+  .modal-header {
+    padding: $spacing-lg $spacing-xl;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: $text-muted;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+
+      &:hover {
+        background-color: $bg-gray;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: $spacing-xl;
+  }
+
+  .modal-footer {
+    padding: $spacing-lg $spacing-xl;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group {
+  margin-bottom: $spacing-lg;
+
+  label {
+    display: block;
+    margin-bottom: $spacing-sm;
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 100px;
+  }
+
+  .error {
+    color: $danger-color;
+    font-size: 0.85rem;
+    margin-top: $spacing-xs;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

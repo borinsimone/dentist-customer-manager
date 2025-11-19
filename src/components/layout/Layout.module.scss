@@ -1,0 +1,149 @@
+@import "../../styles/variables";
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: $sidebar-width;
+  background-color: $bg-white;
+  border-right: 1px solid $border-color;
+  box-shadow: $shadow;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+
+  .logo {
+    padding: $spacing-lg;
+    border-bottom: 1px solid $border-color;
+    text-align: center;
+
+    h2 {
+      color: $primary-color;
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: $text-muted;
+      margin: $spacing-xs 0 0 0;
+    }
+  }
+
+  .nav {
+    padding: $spacing-md;
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      padding: $spacing-md;
+      margin-bottom: $spacing-xs;
+      border-radius: $border-radius-sm;
+      color: $text-secondary;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-weight: 500;
+
+      &:hover {
+        background-color: $bg-gray;
+        color: $text-primary;
+      }
+
+      &.active {
+        background-color: $primary-light;
+        color: $primary-color;
+      }
+
+      .icon {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: $spacing-md;
+    border-top: 1px solid $border-color;
+    background-color: $bg-white;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      margin-bottom: $spacing-md;
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: $primary-color;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+      }
+
+      .user-details {
+        flex: 1;
+
+        .name {
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        .email {
+          font-size: 0.75rem;
+          color: $text-muted;
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  flex: 1;
+  margin-left: $sidebar-width;
+  background-color: $bg-main;
+}
+
+.header {
+  background-color: $bg-white;
+  border-bottom: 1px solid $border-color;
+  padding: $spacing-lg $spacing-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.content {
+  padding: $spacing-xl;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: $mobile) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}

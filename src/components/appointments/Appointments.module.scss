@@ -1,0 +1,343 @@
+@import "../../styles/variables";
+
+.appointments-page {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+
+    .filters {
+      display: flex;
+      gap: $spacing-md;
+      align-items: center;
+
+      select {
+        padding: $spacing-sm $spacing-md;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-sm;
+        background-color: $bg-white;
+      }
+    }
+  }
+
+  .calendar-view {
+    background-color: $bg-white;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-xl;
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-lg;
+      padding-bottom: $spacing-md;
+      border-bottom: 1px solid $border-color;
+
+      .current-date {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .calendar-nav {
+        display: flex;
+        gap: $spacing-sm;
+      }
+    }
+
+    .week-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: $spacing-xs;
+      margin-bottom: $spacing-sm;
+
+      .day-header {
+        text-align: center;
+        font-weight: 600;
+        color: $text-secondary;
+        padding: $spacing-sm;
+        font-size: 0.85rem;
+      }
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: $spacing-xs;
+
+      .calendar-day {
+        min-height: 100px;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-sm;
+        padding: $spacing-sm;
+        background-color: $bg-white;
+        transition: all 0.2s ease;
+        position: relative;
+
+        &::before {
+          content: "✨";
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          font-size: 0.65rem;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+
+        &:hover {
+          background-color: $bg-gray;
+          cursor: pointer;
+          transform: scale(1.02);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+          &::before {
+            opacity: 0.5;
+          }
+        }
+
+        &:active {
+          transform: scale(0.98);
+        }
+
+        &.other-month {
+          background-color: $bg-gray;
+          opacity: 0.5;
+
+          .day-number {
+            color: $text-muted;
+          }
+        }
+
+        &.today {
+          background-color: $primary-light;
+          border-color: $primary-color;
+
+          .day-number {
+            color: $primary-color;
+            font-weight: 700;
+          }
+        }
+
+        .day-number {
+          font-weight: 600;
+          margin-bottom: $spacing-xs;
+          color: $text-primary;
+        }
+
+        .appointments-count {
+          font-size: 0.75rem;
+          color: $text-muted;
+          margin-top: $spacing-xs;
+        }
+
+        .day-appointments {
+          margin-top: $spacing-xs;
+
+          .mini-appointment {
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 500;
+            border: 1px solid transparent;
+            position: relative;
+
+            &::after {
+              content: "👁️";
+              position: absolute;
+              right: 2px;
+              top: 50%;
+              transform: translateY(-50%);
+              opacity: 0;
+              font-size: 0.6rem;
+              transition: opacity 0.15s ease;
+            }
+
+            &:hover {
+              transform: translateX(2px);
+              box-shadow: $shadow-sm;
+              font-weight: 600;
+              padding-right: 18px;
+
+              &::after {
+                opacity: 1;
+              }
+            }
+
+            &.scheduled {
+              background-color: rgba($info-color, 0.2);
+              color: $info-color;
+
+              &:hover {
+                background-color: rgba($info-color, 0.3);
+              }
+            }
+
+            &.confirmed {
+              background-color: rgba($success-color, 0.2);
+              color: $success-color;
+
+              &:hover {
+                background-color: rgba($success-color, 0.3);
+              }
+            }
+
+            &.completed {
+              background-color: rgba($text-muted, 0.2);
+              color: $text-muted;
+
+              &:hover {
+                background-color: rgba($text-muted, 0.3);
+              }
+            }
+
+            &.cancelled {
+              background-color: rgba($danger-color, 0.2);
+              color: $danger-color;
+              text-decoration: line-through;
+              opacity: 0.7;
+
+              &:hover {
+                background-color: rgba($danger-color, 0.3);
+                opacity: 0.9;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .list-view {
+    .appointment-card {
+      background-color: $bg-white;
+      border-radius: $border-radius;
+      box-shadow: $shadow;
+      padding: $spacing-lg;
+      margin-bottom: $spacing-md;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: $spacing-lg;
+      align-items: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+      border-left: 4px solid transparent;
+
+      &::after {
+        content: "👁️ Visualizza";
+        position: absolute;
+        right: $spacing-lg;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        font-size: 0.85rem;
+        color: $primary-color;
+        font-weight: 600;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+      }
+
+      &:hover {
+        box-shadow: $shadow-lg;
+        transform: translateX(4px);
+        border-left-color: $primary-color;
+
+        &::after {
+          opacity: 1;
+        }
+
+        .appointment-status {
+          transform: translateX(-80px);
+        }
+      }
+
+      .appointment-time {
+        text-align: center;
+
+        .date {
+          font-size: 0.85rem;
+          color: $text-muted;
+          margin-bottom: $spacing-xs;
+        }
+
+        .time {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: $primary-color;
+        }
+      }
+
+      .appointment-details {
+        .patient-name {
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin-bottom: $spacing-xs;
+        }
+
+        .appointment-notes {
+          font-size: 0.9rem;
+          color: $text-secondary;
+        }
+      }
+
+      .appointment-status {
+        padding: $spacing-xs $spacing-md;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: transform 0.2s ease;
+
+        &.scheduled {
+          background-color: rgba($info-color, 0.1);
+          color: $info-color;
+        }
+
+        &.confirmed {
+          background-color: rgba($success-color, 0.1);
+          color: $success-color;
+        }
+
+        &.completed {
+          background-color: rgba($text-muted, 0.1);
+          color: $text-muted;
+        }
+
+        &.cancelled {
+          background-color: rgba($danger-color, 0.1);
+          color: $danger-color;
+        }
+      }
+
+      .appointment-actions {
+        display: flex;
+        gap: $spacing-sm;
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: $spacing-2xl;
+    color: $text-muted;
+
+    .icon {
+      font-size: 4rem;
+      margin-bottom: $spacing-md;
+    }
+
+    h3 {
+      margin-bottom: $spacing-sm;
+    }
+  }
+}

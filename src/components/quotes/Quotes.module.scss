@@ -1,0 +1,378 @@
+@import "../../styles/variables";
+
+.quotes-page {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+
+    .filters {
+      display: flex;
+      gap: $spacing-md;
+      align-items: center;
+
+      select {
+        padding: $spacing-sm $spacing-md;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-sm;
+        background-color: $bg-white;
+      }
+    }
+  }
+
+  .quotes-grid {
+    display: grid;
+    gap: $spacing-md;
+  }
+
+  .quote-card {
+    background-color: $bg-white;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+    padding: $spacing-lg;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+    position: relative;
+
+    &::after {
+      content: "👁️ Visualizza";
+      position: absolute;
+      right: $spacing-lg;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      font-size: 0.85rem;
+      color: $primary-color;
+      font-weight: 600;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    &:hover {
+      box-shadow: $shadow-lg;
+      transform: translateX(4px);
+      border-left-color: $primary-color;
+
+      &::after {
+        opacity: 1;
+      }
+
+      .quote-status {
+        transform: translateX(-80px);
+      }
+    }
+
+    .quote-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: $spacing-md;
+
+      .quote-info {
+        flex: 1;
+
+        .quote-patient {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: $spacing-xs;
+          color: $text-primary;
+        }
+
+        .quote-meta {
+          display: flex;
+          gap: $spacing-lg;
+          font-size: 0.85rem;
+          color: $text-secondary;
+
+          .meta-item {
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+          }
+        }
+      }
+
+      .quote-status {
+        padding: $spacing-xs $spacing-md;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: transform 0.2s ease;
+
+        &.draft {
+          background-color: rgba($text-muted, 0.1);
+          color: $text-muted;
+        }
+
+        &.sent {
+          background-color: rgba($info-color, 0.1);
+          color: $info-color;
+        }
+
+        &.accepted {
+          background-color: rgba($success-color, 0.1);
+          color: $success-color;
+        }
+
+        &.rejected {
+          background-color: rgba($danger-color, 0.1);
+          color: $danger-color;
+        }
+      }
+    }
+
+    .quote-items {
+      margin-bottom: $spacing-md;
+      padding: $spacing-md;
+      background-color: $bg-gray;
+      border-radius: $border-radius-sm;
+
+      .items-header {
+        font-size: 0.85rem;
+        color: $text-secondary;
+        margin-bottom: $spacing-sm;
+        font-weight: 600;
+      }
+
+      .item {
+        display: flex;
+        justify-content: space-between;
+        padding: $spacing-xs 0;
+        font-size: 0.9rem;
+
+        .item-name {
+          color: $text-primary;
+        }
+
+        .item-price {
+          color: $text-secondary;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .quote-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: $spacing-md;
+      border-top: 2px solid $border-color;
+      margin-bottom: $spacing-md;
+
+      .total-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      .total-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $primary-color;
+      }
+    }
+
+    .quote-actions {
+      display: flex;
+      gap: $spacing-sm;
+      padding-top: $spacing-sm;
+      border-top: 1px solid $border-color;
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: $spacing-2xl;
+    color: $text-muted;
+
+    .icon {
+      font-size: 4rem;
+      margin-bottom: $spacing-md;
+    }
+
+    h3 {
+      margin-bottom: $spacing-sm;
+    }
+  }
+}
+
+// Modal styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  background-color: $bg-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+
+  .modal-header {
+    padding: $spacing-lg $spacing-xl;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: $text-muted;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+
+      &:hover {
+        background-color: $bg-gray;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: $spacing-xl;
+  }
+
+  .modal-footer {
+    padding: $spacing-lg $spacing-xl;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-sm;
+  }
+}
+
+.form-group {
+  margin-bottom: $spacing-lg;
+
+  label {
+    display: block;
+    margin-bottom: $spacing-sm;
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  input,
+  select {
+    width: 100%;
+  }
+
+  .error {
+    color: $danger-color;
+    font-size: 0.85rem;
+    margin-top: $spacing-xs;
+  }
+}
+
+.items-builder {
+  margin-bottom: $spacing-lg;
+
+  .items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+
+    h4 {
+      margin: 0;
+    }
+  }
+
+  .item-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: $spacing-sm;
+    align-items: start;
+    margin-bottom: $spacing-md;
+    padding: $spacing-md;
+    background-color: $bg-gray;
+    border-radius: $border-radius-sm;
+
+    .form-group {
+      margin-bottom: 0;
+
+      label {
+        font-size: 0.85rem;
+        margin-bottom: $spacing-xs;
+      }
+
+      input,
+      select {
+        font-size: 0.9rem;
+      }
+    }
+
+    .remove-button {
+      margin-top: 1.5rem;
+    }
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md;
+    background-color: $primary-light;
+    border-radius: $border-radius-sm;
+    margin-top: $spacing-md;
+
+    .total-label {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .total-amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $primary-color;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,168 @@
+@import "../../styles/variables";
+
+.dashboard {
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(250px, 1fr)
+    );
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
+  }
+
+  .stat-card {
+    background: linear-gradient(
+      135deg,
+      $primary-color 0%,
+      $primary-hover 100%
+    );
+    color: white;
+    padding: $spacing-lg;
+    border-radius: $border-radius;
+    box-shadow: $shadow-md;
+
+    &.success {
+      background: linear-gradient(
+        135deg,
+        $success-color 0%,
+        darken($success-color, 10%) 100%
+      );
+    }
+
+    &.warning {
+      background: linear-gradient(
+        135deg,
+        $warning-color 0%,
+        darken($warning-color, 10%) 100%
+      );
+    }
+
+    &.info {
+      background: linear-gradient(
+        135deg,
+        $info-color 0%,
+        darken($info-color, 10%) 100%
+      );
+    }
+
+    .icon {
+      font-size: 2rem;
+      margin-bottom: $spacing-sm;
+    }
+
+    .value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: $spacing-xs;
+    }
+
+    .label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .appointments-list {
+    .appointment-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: $spacing-md;
+      border-bottom: 1px solid $border-color;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-radius: $border-radius-sm;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background-color: $bg-gray;
+        transform: translateX(4px);
+        box-shadow: $shadow-sm;
+      }
+
+      .appointment-time {
+        font-weight: 600;
+        color: $primary-color;
+        min-width: 80px;
+      }
+
+      .appointment-details {
+        flex: 1;
+        padding: 0 $spacing-md;
+
+        .patient-name {
+          font-weight: 600;
+          margin-bottom: $spacing-xs;
+        }
+
+        .appointment-notes {
+          font-size: 0.85rem;
+          color: $text-muted;
+        }
+      }
+
+      .appointment-status {
+        padding: $spacing-xs $spacing-md;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+
+        &.scheduled {
+          background-color: rgba($info-color, 0.1);
+          color: $info-color;
+        }
+
+        &.confirmed {
+          background-color: rgba($success-color, 0.1);
+          color: $success-color;
+        }
+
+        &.completed {
+          background-color: rgba($text-muted, 0.1);
+          color: $text-muted;
+        }
+
+        &.cancelled {
+          background-color: rgba($danger-color, 0.1);
+          color: $danger-color;
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: $spacing-2xl;
+    color: $text-muted;
+
+    .icon {
+      font-size: 3rem;
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(400px, 1fr)
+    );
+    gap: $spacing-lg;
+    margin-top: $spacing-xl;
+  }
+}
