@@ -2,6 +2,15 @@
 
 Sistema di gestione completo per studi dentistici con funzionalità per pazienti, appuntamenti, preventivi e pagamenti.
 
+## 🌐 Demo Live
+
+👉 **[Apri l'applicazione](https://borinsimone.github.io/dentist-customer-manager/)**
+
+### Credenziali Demo
+
+- **Email**: `demo@studio.it`
+- **Password**: `demo123`
+
 ## 🚀 Caratteristiche Implementate
 
 ### ✅ **Versione 0.1 - Demo Locale**
@@ -156,7 +165,26 @@ npm run dev
 
 # Build per produzione
 npm run build
+
+# Deploy su GitHub Pages
+npm run deploy
 ```
+
+## 🚀 Deploy
+
+Il deploy su **GitHub Pages** avviene automaticamente ad ogni push sul branch `main` tramite GitHub Actions.
+
+### Deploy Manuale
+
+```bash
+npm run deploy
+```
+
+### Configurazione GitHub Pages
+
+1. Vai su **Settings** → **Pages**
+2. Seleziona **Source**: GitHub Actions
+3. Il workflow `.github/workflows/deploy.yml` gestirà il deploy automatico
 
 - Creazione preventivi tseslint.configs.strictTypeChecked,
 
