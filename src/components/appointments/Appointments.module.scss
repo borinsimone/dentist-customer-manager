@@ -1,6 +1,11 @@
 @import '../../styles/variables';
 
 .appointments-page {
+  // Assicuriamoci che la classe sia esportata
+  .has-appointments {
+    z-index: 1;
+  }
+
   .page-header {
     display: flex;
     justify-content: space-between;
@@ -260,6 +265,27 @@
   }
 
   .list-view {
+    .date-group {
+      margin-bottom: $spacing-xl;
+
+      .date-header {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: $text-secondary;
+        margin-bottom: $spacing-md;
+        padding-bottom: $spacing-xs;
+        border-bottom: 2px solid $border-color;
+        display: inline-block;
+        text-transform: capitalize;
+      }
+
+      .appointments-group {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+      }
+    }
+
     .appointment-card {
       background-color: $bg-white;
       border-radius: $border-radius;
@@ -364,6 +390,30 @@
       .appointment-actions {
         display: flex;
         gap: $spacing-sm;
+      }
+    }
+
+    .past-events-container {
+      margin-top: $spacing-xl;
+      border-top: 1px solid $border-color;
+      padding-top: $spacing-lg;
+
+      .past-events-btn {
+        margin-bottom: $spacing-lg;
+      }
+
+      .past-events-list {
+        animation: fadeIn 0.3s ease;
+
+        .appointment-card {
+          opacity: 0.7;
+          background-color: #f9f9f9;
+
+          &:hover {
+            opacity: 1;
+            background-color: $bg-white;
+          }
+        }
       }
     }
   }
@@ -628,51 +678,38 @@
           }
 
           .calendar-day {
-            min-height: 50px;
+            min-height: 45px; // Ridotto altezza
             padding: 2px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
+            position: relative; // Importante per il posizionamento assoluto del puntino
 
             .day-number {
               font-size: 0.8rem;
-              margin-bottom: 2px;
+              margin-bottom: 0;
+              z-index: 2;
             }
 
             .day-appointments {
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: center;
-              gap: 2px;
-              width: 100%;
-
-              .mini-appointment {
-                display: none; // Nascondi il testo su mobile
-              }
-
-              .appointments-count {
-                display: none;
-              }
-
-              // Mostra puntini colorati su mobile
-              &::after {
-                content: '';
-                display: none;
-              }
+              display: none !important; // Nascondi appuntamenti testuali
             }
 
-            // Crea puntini per ogni appuntamento (simulato con pseudo-elementi o classi specifiche se necessario,
-            // ma qui usiamo un approccio più semplice: mostriamo un indicatore se ci sono appuntamenti)
             &.has-appointments {
-              position: relative;
+              background-color: rgba($primary-color, 0.05);
 
               &::after {
-                content: '•';
-                color: $primary-color;
-                font-size: 1.5rem;
-                line-height: 0.5;
+                content: '';
+                display: block;
+                width: 6px;
+                height: 6px;
+                background-color: $primary-color;
+                border-radius: 50%;
                 position: absolute;
-                bottom: 5px;
+                bottom: 6px;
+                left: 50%;
+                transform: translateX(-50%);
               }
             }
           }

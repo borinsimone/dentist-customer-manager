@@ -27,6 +27,17 @@ export const Appointments = () => {
 
   useEffect(() => {
     loadData();
+
+    // Force list view on mobile
+    const checkMobile = () => {
+      if (window.innerWidth <= 768) {
+        setViewMode('list');
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const loadData = () => {
@@ -79,21 +90,23 @@ export const Appointments = () => {
     <Layout
       title='Appuntamenti'
       actions={
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Button
-            variant={viewMode === 'list' ? 'primary' : 'secondary'}
-            onClick={() => setViewMode('list')}
-            size='small'
-          >
-            📋 Lista
-          </Button>
-          <Button
-            variant={viewMode === 'calendar' ? 'primary' : 'secondary'}
-            onClick={() => setViewMode('calendar')}
-            size='small'
-          >
-            📅 Calendario
-          </Button>
+        <div className={styles.actions}>
+          <div className={styles.viewToggles}>
+            <Button
+              variant={viewMode === 'list' ? 'primary' : 'secondary'}
+              onClick={() => setViewMode('list')}
+              size='small'
+            >
+              📋 Lista
+            </Button>
+            <Button
+              variant={viewMode === 'calendar' ? 'primary' : 'secondary'}
+              onClick={() => setViewMode('calendar')}
+              size='small'
+            >
+              📅 Calendario
+            </Button>
+          </div>
           <Button onClick={handleAddAppointment}>➕ Nuovo Appuntamento</Button>
         </div>
       }
@@ -187,6 +200,8 @@ const ListView = ({
   onQuickView,
   getStatusLabel,
 }: ListViewProps) => {
+  const [showPast, setShowPast] = useState(false);
+
   if (appointments.length === 0) {
     return (
       <div className={styles['empty-state']}>
@@ -197,45 +212,123 @@ const ListView = ({
     );
   }
 
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  const upcomingAppointments = appointments.filter((a) => a.date >= todayStr);
+  const pastAppointments = appointments.filter((a) => a.date < todayStr);
+
+  // Raggruppa appuntamenti per data
+  const groupAppointments = (list: Appointment[]) => {
+    return list.reduce((acc, appointment) => {
+      const date = appointment.date;
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(appointment);
+      return acc;
+    }, {} as Record<string, Appointment[]>);
+  };
+
+  const groupedUpcoming = groupAppointments(upcomingAppointments);
+  const groupedPast = groupAppointments(pastAppointments);
+
+  // Ordina le date
+  const sortedUpcomingDates = Object.keys(groupedUpcoming).sort();
+  const sortedPastDates = Object.keys(groupedPast).sort((a, b) =>
+    b.localeCompare(a)
+  );
+
+  const getDateLabel = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const isToday = date.toDateString() === today.toDateString();
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+
+    if (isToday) return 'Oggi';
+    if (isTomorrow) return 'Domani';
+
+    return date.toLocaleDateString('it-IT', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+
+  const renderGroup = (date: string, group: Appointment[]) => (
+    <div
+      key={date}
+      className={styles['date-group']}
+    >
+      <h3 className={styles['date-header']}>{getDateLabel(date)}</h3>
+      <div className={styles['appointments-group']}>
+        {group
+          .sort((a, b) => a.time.localeCompare(b.time))
+          .map((appointment) => (
+            <div
+              key={appointment.id}
+              className={styles['appointment-card']}
+              onClick={() => onQuickView(appointment)}
+            >
+              <div className={styles['appointment-time']}>
+                <div className={styles.time}>{appointment.time}</div>
+              </div>
+
+              <div className={styles['appointment-details']}>
+                <div className={styles['patient-name']}>
+                  {appointment.patientName}
+                </div>
+                {appointment.notes && (
+                  <div className={styles['appointment-notes']}>
+                    {appointment.notes}
+                  </div>
+                )}
+              </div>
+
+              <div
+                className={`${styles['appointment-status']} ${
+                  styles[appointment.status]
+                }`}
+              >
+                {getStatusLabel(appointment.status)}
+              </div>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className={styles['list-view']}>
-      {appointments.map((appointment) => (
-        <div
-          key={appointment.id}
-          className={styles['appointment-card']}
-          onClick={() => onQuickView(appointment)}
-        >
-          <div className={styles['appointment-time']}>
-            <div className={styles.date}>
-              {new Date(appointment.date).toLocaleDateString('it-IT', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })}
-            </div>
-            <div className={styles.time}>{appointment.time}</div>
-          </div>
+      {sortedUpcomingDates.map((date) =>
+        renderGroup(date, groupedUpcoming[date])
+      )}
 
-          <div className={styles['appointment-details']}>
-            <div className={styles['patient-name']}>
-              {appointment.patientName}
-            </div>
-            {appointment.notes && (
-              <div className={styles['appointment-notes']}>
-                {appointment.notes}
-              </div>
-            )}
-          </div>
-
-          <div
-            className={`${styles['appointment-status']} ${
-              styles[appointment.status]
-            }`}
+      {pastAppointments.length > 0 && (
+        <div className={styles['past-events-container']}>
+          <Button
+            variant='secondary'
+            onClick={() => setShowPast(!showPast)}
+            fullWidth
+            className={styles['past-events-btn']}
           >
-            {getStatusLabel(appointment.status)}
-          </div>
+            {showPast
+              ? 'Nascondi eventi passati'
+              : `Mostra ${pastAppointments.length} eventi passati`}
+          </Button>
+
+          {showPast && (
+            <div className={styles['past-events-list']}>
+              {sortedPastDates.map((date) =>
+                renderGroup(date, groupedPast[date])
+              )}
+            </div>
+          )}
         </div>
-      ))}
+      )}
     </div>
   );
 };
