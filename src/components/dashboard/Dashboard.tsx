@@ -1,19 +1,16 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Layout } from "../layout/Layout";
-import { Card, CardHeader, CardBody } from "../common/Card";
-import { QuickEditAppointment } from "./QuickEditAppointment";
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Layout } from '../layout/Layout';
+import { Card, CardHeader, CardBody } from '../common/Card';
+import { QuickEditAppointment } from './QuickEditAppointment';
 import {
   appointmentsService,
   patientsService,
   paymentsService,
   quotesService,
-} from "../../services/storage";
-import type {
-  DashboardStats,
-  Appointment,
-} from "../../types";
-import styles from "./Dashboard.module.scss";
+} from '../../services/storage';
+import type { DashboardStats, Appointment } from '../../types';
+import styles from './Dashboard.module.scss';
 
 export const Dashboard = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -32,7 +29,7 @@ export const Dashboard = () => {
   }, []);
 
   const loadDashboardData = () => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split('T')[0];
     const allAppointments = appointmentsService.getAll();
     const allPatients = patientsService.getAll();
     const allPayments = paymentsService.getAll();
@@ -40,8 +37,7 @@ export const Dashboard = () => {
 
     // Appuntamenti di oggi
     const todayAppointments = allAppointments.filter(
-      (apt) =>
-        apt.date === today && apt.status !== "cancelled"
+      (apt) => apt.date === today && apt.status !== 'cancelled'
     );
 
     // Prossimi appuntamenti (prossimi 7 giorni)
@@ -51,9 +47,8 @@ export const Dashboard = () => {
       .filter(
         (apt) =>
           apt.date > today &&
-          apt.date <=
-            nextWeek.toISOString().split("T")[0] &&
-          apt.status !== "cancelled"
+          apt.date <= nextWeek.toISOString().split('T')[0] &&
+          apt.status !== 'cancelled'
       )
       .sort((a, b) => a.date.localeCompare(b.date))
       .slice(0, 5);
@@ -62,9 +57,7 @@ export const Dashboard = () => {
     const patientsWithPending = allPatients
       .map((patient) => {
         const patientQuotes = allQuotes.filter(
-          (q) =>
-            q.patientId === patient.id &&
-            q.status === "accepted"
+          (q) => q.patientId === patient.id && q.status === 'accepted'
         );
         const totalDue = patientQuotes.reduce(
           (sum, q) => sum + q.totalAmount,
@@ -74,10 +67,7 @@ export const Dashboard = () => {
         const patientPayments = allPayments.filter(
           (p) => p.patientId === patient.id
         );
-        const totalPaid = patientPayments.reduce(
-          (sum, p) => sum + p.amount,
-          0
-        );
+        const totalPaid = patientPayments.reduce((sum, p) => sum + p.amount, 0);
 
         const pending = totalDue - totalPaid;
 
@@ -91,13 +81,8 @@ export const Dashboard = () => {
       .slice(0, 5);
 
     // Incassi di oggi
-    const todayPayments = allPayments.filter(
-      (p) => p.date === today
-    );
-    const todayRevenue = todayPayments.reduce(
-      (sum, p) => sum + p.amount,
-      0
-    );
+    const todayPayments = allPayments.filter((p) => p.date === today);
+    const todayRevenue = todayPayments.reduce((sum, p) => sum + p.amount, 0);
 
     setStats({
       todayAppointments,
@@ -109,33 +94,33 @@ export const Dashboard = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("it-IT", {
-      style: "currency",
-      currency: "EUR",
+    return new Intl.NumberFormat('it-IT', {
+      style: 'currency',
+      currency: 'EUR',
     }).format(amount);
   };
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      scheduled: "Programmato",
-      confirmed: "Confermato",
-      completed: "Completato",
-      cancelled: "Annullato",
+      scheduled: 'Programmato',
+      confirmed: 'Confermato',
+      completed: 'Completato',
+      cancelled: 'Annullato',
     };
     return labels[status] || status;
   };
 
   return (
-    <Layout title="Dashboard">
+    <Layout title='Dashboard'>
       <div className={styles.dashboard}>
         <motion.div
-          className={styles["stats-grid"]}
+          className={styles['stats-grid']}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           <motion.div
-            className={`${styles["stat-card"]}`}
+            className={`${styles['stat-card']}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: 0.1 }}
@@ -145,16 +130,12 @@ export const Dashboard = () => {
             }}
           >
             <div className={styles.icon}>👥</div>
-            <div className={styles.value}>
-              {stats.totalPatients}
-            </div>
-            <div className={styles.label}>
-              Pazienti totali
-            </div>
+            <div className={styles.value}>{stats.totalPatients}</div>
+            <div className={styles.label}>Pazienti totali</div>
           </motion.div>
 
           <motion.div
-            className={`${styles["stat-card"]} ${styles.success}`}
+            className={`${styles['stat-card']} ${styles.success}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -164,16 +145,12 @@ export const Dashboard = () => {
             }}
           >
             <div className={styles.icon}>📅</div>
-            <div className={styles.value}>
-              {stats.todayAppointments.length}
-            </div>
-            <div className={styles.label}>
-              Appuntamenti oggi
-            </div>
+            <div className={styles.value}>{stats.todayAppointments.length}</div>
+            <div className={styles.label}>Appuntamenti oggi</div>
           </motion.div>
 
           <motion.div
-            className={`${styles["stat-card"]} ${styles.warning}`}
+            className={`${styles['stat-card']} ${styles.warning}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -186,9 +163,7 @@ export const Dashboard = () => {
             <div className={styles.value}>
               {stats.upcomingAppointments.length}
             </div>
-            <div className={styles.label}>
-              Prossimi appuntamenti
-            </div>
+            <div className={styles.label}>Prossimi appuntamenti</div>
           </motion.div>
           {/* 
           <motion.div
@@ -207,7 +182,8 @@ export const Dashboard = () => {
         </motion.div>
 
         <motion.div
-          className={styles["grid-2"]}
+          className={styles['card-container']}
+          // className={styles["grid-2"]}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -218,69 +194,41 @@ export const Dashboard = () => {
             </CardHeader>
             <CardBody>
               {stats.todayAppointments.length === 0 ? (
-                <div className={styles["empty-state"]}>
+                <div className={styles['empty-state']}>
                   <div className={styles.icon}>📭</div>
                   <p>Nessun appuntamento oggi</p>
                 </div>
               ) : (
-                <div
-                  className={styles["appointments-list"]}
-                >
-                  {stats.todayAppointments.map(
-                    (appointment) => (
-                      <div
-                        key={appointment.id}
-                        className={
-                          styles["appointment-item"]
-                        }
-                        onClick={() =>
-                          setSelectedAppointment(
-                            appointment
-                          )
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        <div
-                          className={
-                            styles["appointment-time"]
-                          }
-                        >
-                          {appointment.time}
-                        </div>
-                        <div
-                          className={
-                            styles["appointment-details"]
-                          }
-                        >
-                          <div
-                            className={
-                              styles["patient-name"]
-                            }
-                          >
-                            {appointment.patientName}
-                          </div>
-                          {appointment.notes && (
-                            <div
-                              className={
-                                styles["appointment-notes"]
-                              }
-                            >
-                              {appointment.notes}
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          className={`${
-                            styles["appointment-status"]
-                          } ${styles[appointment.status]}`}
-                        >
-                          {getStatusLabel(
-                            appointment.status
-                          )}
-                        </div>
+                <div className={styles['appointments-list']}>
+                  {stats.todayAppointments.map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className={styles['appointment-item']}
+                      onClick={() => setSelectedAppointment(appointment)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <div className={styles['appointment-time']}>
+                        {appointment.time}
                       </div>
-                    )
-                  )}
+                      <div className={styles['appointment-details']}>
+                        <div className={styles['patient-name']}>
+                          {appointment.patientName}
+                        </div>
+                        {appointment.notes && (
+                          <div className={styles['appointment-notes']}>
+                            {appointment.notes}
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        className={`${styles['appointment-status']} ${
+                          styles[appointment.status]
+                        }`}
+                      >
+                        {getStatusLabel(appointment.status)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardBody>
@@ -292,76 +240,48 @@ export const Dashboard = () => {
             </CardHeader>
             <CardBody>
               {stats.upcomingAppointments.length === 0 ? (
-                <div className={styles["empty-state"]}>
+                <div className={styles['empty-state']}>
                   <div className={styles.icon}>📭</div>
                   <p>Nessun appuntamento in programma</p>
                 </div>
               ) : (
-                <div
-                  className={styles["appointments-list"]}
-                >
-                  {stats.upcomingAppointments.map(
-                    (appointment) => (
-                      <div
-                        key={appointment.id}
-                        className={
-                          styles["appointment-item"]
-                        }
-                        onClick={() =>
-                          setSelectedAppointment(
-                            appointment
-                          )
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        <div
-                          className={
-                            styles["appointment-time"]
+                <div className={styles['appointments-list']}>
+                  {stats.upcomingAppointments.map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className={styles['appointment-item']}
+                      onClick={() => setSelectedAppointment(appointment)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <div className={styles['appointment-time']}>
+                        {new Date(appointment.date).toLocaleDateString(
+                          'it-IT',
+                          {
+                            day: '2-digit',
+                            month: '2-digit',
                           }
-                        >
-                          {new Date(
-                            appointment.date
-                          ).toLocaleDateString("it-IT", {
-                            day: "2-digit",
-                            month: "2-digit",
-                          })}
-                          <br />
-                          {appointment.time}
-                        </div>
-                        <div
-                          className={
-                            styles["appointment-details"]
-                          }
-                        >
-                          <div
-                            className={
-                              styles["patient-name"]
-                            }
-                          >
-                            {appointment.patientName}
-                          </div>
-                          {appointment.notes && (
-                            <div
-                              className={
-                                styles["appointment-notes"]
-                              }
-                            >
-                              {appointment.notes}
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          className={`${
-                            styles["appointment-status"]
-                          } ${styles[appointment.status]}`}
-                        >
-                          {getStatusLabel(
-                            appointment.status
-                          )}
-                        </div>
+                        )}
+                        -{appointment.time}
                       </div>
-                    )
-                  )}
+                      <div className={styles['appointment-details']}>
+                        <div className={styles['patient-name']}>
+                          {appointment.patientName}
+                        </div>
+                        {appointment.notes && (
+                          <div className={styles['appointment-notes']}>
+                            {appointment.notes}
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        className={`${styles['appointment-status']} ${
+                          styles[appointment.status]
+                        }`}
+                      >
+                        {getStatusLabel(appointment.status)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardBody>
@@ -370,45 +290,26 @@ export const Dashboard = () => {
           {stats.patientsWithPendingPayments.length > 0 && (
             <Card>
               <CardHeader>
-                <h2>
-                  💳 Pazienti con pagamenti in sospeso
-                </h2>
+                <h2>💳 Pazienti con pagamenti in sospeso</h2>
               </CardHeader>
               <CardBody>
-                <div
-                  className={styles["appointments-list"]}
-                >
+                <div className={styles['appointments-list']}>
                   {stats.patientsWithPendingPayments.map(
                     ({ patient, pendingAmount }) => (
                       <div
                         key={patient.id}
-                        className={
-                          styles["appointment-item"]
-                        }
+                        className={styles['appointment-item']}
                       >
-                        <div
-                          className={
-                            styles["appointment-details"]
-                          }
-                        >
-                          <div
-                            className={
-                              styles["patient-name"]
-                            }
-                          >
+                        <div className={styles['appointment-details']}>
+                          <div className={styles['patient-name']}>
                             {patient.name}
                           </div>
-                          <div
-                            className={
-                              styles["appointment-notes"]
-                            }
-                          >
-                            {patient.phone} •{" "}
-                            {patient.email}
+                          <div className={styles['appointment-notes']}>
+                            {patient.phone} • {patient.email}
                           </div>
                         </div>
                         <div
-                          className={`${styles["appointment-status"]} ${styles.warning}`}
+                          className={`${styles['appointment-status']} ${styles.warning}`}
                         >
                           {formatCurrency(pendingAmount)}
                         </div>

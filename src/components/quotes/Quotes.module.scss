@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@import '../../styles/variables';
 
 .quotes-page {
   .page-header {
@@ -39,11 +39,11 @@
     position: relative;
 
     &::after {
-      content: "👁️ Visualizza";
+      content: '👁️ Visualizza';
       position: absolute;
       right: $spacing-lg;
-      top: 50%;
-      transform: translateY(-50%);
+
+      bottom: 24px;
       opacity: 0;
       font-size: 0.85rem;
       color: $primary-color;
@@ -374,5 +374,43 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (max-width: $mobile) {
+  .quotes-page {
+    .page-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: $spacing-md;
+
+      .filters {
+        flex-direction: column;
+        align-items: stretch;
+
+        select {
+          width: 100%;
+        }
+      }
+    }
+
+    .quote-card {
+      .quote-header {
+        flex-direction: column;
+        gap: $spacing-md;
+
+        .quote-info {
+          .quote-meta {
+            flex-direction: column;
+            gap: $spacing-xs;
+            align-items: flex-start;
+          }
+        }
+
+        .quote-status {
+          align-self: flex-start;
+        }
+      }
+    }
   }
 }

@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@import '../../styles/variables';
 
 .payments-page {
   .page-header {
@@ -37,41 +37,86 @@
     }
   }
 
-  .stats-cards {
-    display: grid;
-    grid-template-columns: repeat(
-      auto-fit,
-      minmax(200px, 1fr)
-    );
-    gap: $spacing-lg;
-    margin-bottom: $spacing-xl;
+  .stats-row {
+    // display: grid;
+    // grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    // gap: $spacing-lg;
+    // margin-bottom: $spacing-xl;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    width: 100%;
 
-    .stat-card {
-      background-color: white;
-      padding: $spacing-lg;
+    .circular-widget {
+      // background-color: white;
+      padding: $spacing-sm;
       border-radius: $border-radius-md;
-      box-shadow: $shadow-sm;
 
-      .stat-label {
-        font-size: 0.85rem;
-        color: $text-secondary;
-        margin-bottom: $spacing-xs;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      // min-height: 200px;
+      width: 50%;
+      max-width: 180px;
+
+      .circular-chart {
+        display: block;
+        margin: 0 auto;
+        max-width: 80%;
+        max-height: 250px;
       }
 
-      .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: $text-primary;
+      .circle-bg {
+        fill: none;
+        stroke: $bg-gray;
+        stroke-width: 3.8;
+      }
+
+      .circle {
+        fill: none;
+        stroke-width: 2.8;
+        stroke-linecap: round;
+        animation: progress 1s ease-out forwards;
 
         &.success {
-          color: $success-color;
+          stroke: $success-color;
         }
-
+        &.primary {
+          stroke: $primary-color;
+        }
+        &.info {
+          stroke: $info-color;
+        }
         &.warning {
-          color: $warning-color;
+          stroke: $warning-color;
         }
+      }
+
+      .widget-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 100%;
+      }
+
+      .widget-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $text-primary;
+        line-height: 1.2;
+      }
+
+      .widget-label {
+        display: block;
+        font-size: 0.75rem;
+        color: $text-secondary;
+        text-transform: uppercase;
+        margin-top: $spacing-xs;
       }
     }
   }
@@ -90,9 +135,11 @@
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
+    width: 100%;
+    box-sizing: border-box;
 
     &::after {
-      content: "Visualizza";
+      content: 'Visualizza';
       position: absolute;
       right: $spacing-lg;
       top: 50%;
@@ -243,6 +290,7 @@
   display: flex;
   flex-direction: column;
   animation: slideUp 0.3s ease;
+  overflow-y: auto;
 
   .modal-header {
     display: flex;
@@ -360,5 +408,53 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
+
+@media (max-width: $mobile) {
+  .modal {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .modal-footer {
+    padding: $spacing-md;
+    background-color: $bg-white;
+    border-top: 1px solid $border-color;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+  }
+
+  .payments-page {
+    .payment-card {
+      padding: $spacing-md;
+
+      .payment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-sm;
+
+        .payment-amount {
+          align-self: flex-end;
+          font-size: 1.2rem;
+        }
+      }
+    }
   }
 }

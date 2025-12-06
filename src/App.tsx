@@ -1,36 +1,20 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import {
-  AuthProvider,
-  useAuth,
-} from "./contexts/AuthContext";
-import { Login } from "./components/auth/Login";
-import { Dashboard } from "./components/dashboard/Dashboard";
-import { Patients } from "./components/patients/Patients";
-import { Appointments } from "./components/appointments/Appointments";
-import { Quotes } from "./components/quotes/Quotes";
-import { Payments } from "./components/payments/Payments";
-import { Settings } from "./components/settings/Settings";
-import { initializeDemoData } from "./services/storage";
-import { useEffect } from "react";
-import "./styles/global.scss";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Login } from './components/auth/Login';
+import { Dashboard } from './components/dashboard/Dashboard';
+import { Patients } from './components/patients/Patients';
+import { Appointments } from './components/appointments/Appointments';
+import { Quotes } from './components/quotes/Quotes';
+import { Payments } from './components/payments/Payments';
+import { Settings } from './components/settings/Settings';
+import { initializeDemoData } from './services/storage';
+import { useEffect } from 'react';
+import './styles/global.scss';
 
 // Protected Route Component
-const ProtectedRoute = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
-  return isAuthenticated ? (
-    <>{children}</>
-  ) : (
-    <Navigate to="/login" />
-  );
+  return isAuthenticated ? <>{children}</> : <Navigate to='/login' />;
 };
 
 // App Content (inside Router)
@@ -45,14 +29,12 @@ const AppContent = () => {
   return (
     <Routes>
       <Route
-        path="/login"
-        element={
-          isAuthenticated ? <Navigate to="/" /> : <Login />
-        }
+        path='/login'
+        element={isAuthenticated ? <Navigate to='/' /> : <Login />}
       />
 
       <Route
-        path="/"
+        path='/'
         element={
           <ProtectedRoute>
             <Dashboard />
@@ -61,7 +43,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/patients"
+        path='/patients'
         element={
           <ProtectedRoute>
             <Patients />
@@ -70,7 +52,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/appointments"
+        path='/appointments'
         element={
           <ProtectedRoute>
             <Appointments />
@@ -79,7 +61,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/quotes"
+        path='/quotes'
         element={
           <ProtectedRoute>
             <Quotes />
@@ -88,7 +70,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/payments"
+        path='/payments'
         element={
           <ProtectedRoute>
             <Payments />
@@ -97,7 +79,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/settings"
+        path='/settings'
         element={
           <ProtectedRoute>
             <Settings />
@@ -110,7 +92,7 @@ const AppContent = () => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/dentist-customer-manager'>
       <AuthProvider>
         <AppContent />
       </AuthProvider>

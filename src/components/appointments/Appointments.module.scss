@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@import '../../styles/variables';
 
 .appointments-page {
   .page-header {
@@ -19,6 +19,44 @@
         border: 1px solid $border-color;
         border-radius: $border-radius-sm;
         background-color: $bg-white;
+      }
+    }
+
+    .legend {
+      display: flex;
+      gap: $spacing-md;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .legendItem {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        font-size: 0.85rem;
+        color: $text-secondary;
+
+        .dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          display: inline-block;
+
+          &.scheduled {
+            background-color: $info-color;
+          }
+
+          &.confirmed {
+            background-color: $success-color;
+          }
+
+          &.completed {
+            background-color: $text-muted;
+          }
+
+          &.cancelled {
+            background-color: $danger-color;
+          }
+        }
       }
     }
   }
@@ -78,8 +116,12 @@
         transition: all 0.2s ease;
         position: relative;
 
+        &.has-appointments {
+          z-index: 1;
+        }
+
         &::before {
-          content: "✨";
+          content: '✨';
           position: absolute;
           top: 4px;
           right: 4px;
@@ -152,7 +194,7 @@
             position: relative;
 
             &::after {
-              content: "👁️";
+              content: '👁️';
               position: absolute;
               right: 2px;
               top: 50%;
@@ -234,7 +276,7 @@
       border-left: 4px solid transparent;
 
       &::after {
-        content: "👁️ Visualizza";
+        content: '👁️ Visualizza';
         position: absolute;
         right: $spacing-lg;
         top: 50%;
@@ -338,6 +380,304 @@
 
     h3 {
       margin-bottom: $spacing-sm;
+    }
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .modal {
+    background-color: $bg-white;
+    border-radius: $border-radius-lg;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: $shadow-xl;
+    animation: slideUp 0.3s ease-out;
+
+    .modal-header {
+      padding: $spacing-lg;
+      border-bottom: 1px solid $border-color;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background-color: $bg-white;
+      z-index: 1;
+
+      h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: $text-primary;
+      }
+
+      .close-button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: $text-muted;
+        padding: $spacing-xs;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+
+        &:hover {
+          background-color: $bg-gray;
+          color: $danger-color;
+        }
+      }
+    }
+
+    .modal-body {
+      padding: $spacing-lg;
+
+      .form-group {
+        margin-bottom: $spacing-lg;
+
+        label {
+          display: block;
+          margin-bottom: $spacing-xs;
+          font-weight: 500;
+          color: $text-secondary;
+        }
+
+        input,
+        select,
+        textarea {
+          width: 100%;
+          padding: $spacing-sm;
+          border: 1px solid $border-color;
+          border-radius: $border-radius;
+          font-size: 1rem;
+          transition: border-color 0.2s;
+
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+          }
+        }
+
+        textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+
+        .error {
+          color: $danger-color;
+          font-size: 0.85rem;
+          margin-top: $spacing-xs;
+        }
+      }
+    }
+
+    .modal-footer {
+      padding: $spacing-lg;
+      border-top: 1px solid $border-color;
+      display: flex;
+      justify-content: flex-end;
+      gap: $spacing-md;
+      position: sticky;
+      bottom: 0;
+      background-color: $bg-white;
+      z-index: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .day-appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: $spacing-sm 0;
+
+    .day-appointment-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      padding: $spacing-md;
+      background-color: $bg-white;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        box-shadow: $shadow-md;
+        // transform: translateX(4px);
+        border-color: $primary-color;
+      }
+
+      .appointment-time-badge {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $primary-color;
+        min-width: 60px;
+        text-align: center;
+      }
+
+      .appointment-info {
+        flex: 1;
+
+        .patient-name {
+          font-weight: 600;
+          font-size: 1rem;
+          margin-bottom: $spacing-xs;
+        }
+
+        .appointment-notes {
+          font-size: 0.85rem;
+          color: $text-secondary;
+        }
+      }
+
+      .status-badge {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .empty-day {
+    text-align: center;
+    padding: $spacing-xl;
+    color: $text-muted;
+
+    p {
+      margin-bottom: $spacing-lg;
+      font-size: 1.1rem;
+    }
+  }
+
+  @media (max-width: $mobile) {
+    .appointments-page {
+      .page-header {
+        flex-direction: column;
+        align-items: stretch;
+
+        .filters {
+          flex-direction: column;
+          align-items: stretch;
+
+          select {
+            width: 100%;
+          }
+        }
+
+        .legend {
+          justify-content: center;
+        }
+      }
+
+      .calendar-view {
+        padding: $spacing-sm;
+
+        .calendar-header {
+          flex-direction: column;
+          gap: $spacing-md;
+        }
+
+        .week-days,
+        .calendar-grid {
+          gap: 1px;
+
+          .day-header {
+            padding: 2px;
+            font-size: 0.7rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .calendar-day {
+            min-height: 50px;
+            padding: 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .day-number {
+              font-size: 0.8rem;
+              margin-bottom: 2px;
+            }
+
+            .day-appointments {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+              gap: 2px;
+              width: 100%;
+
+              .mini-appointment {
+                display: none; // Nascondi il testo su mobile
+              }
+
+              .appointments-count {
+                display: none;
+              }
+
+              // Mostra puntini colorati su mobile
+              &::after {
+                content: '';
+                display: none;
+              }
+            }
+
+            // Crea puntini per ogni appuntamento (simulato con pseudo-elementi o classi specifiche se necessario,
+            // ma qui usiamo un approccio più semplice: mostriamo un indicatore se ci sono appuntamenti)
+            &.has-appointments {
+              position: relative;
+
+              &::after {
+                content: '•';
+                color: $primary-color;
+                font-size: 1.5rem;
+                line-height: 0.5;
+                position: absolute;
+                bottom: 5px;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

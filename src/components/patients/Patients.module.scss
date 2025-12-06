@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@import '../../styles/variables';
 
 .patients-page {
   .page-header {
@@ -229,5 +229,41 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (max-width: $mobile) {
+  .patients-page {
+    .page-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: $spacing-md;
+
+      .search-bar {
+        max-width: 100%;
+      }
+    }
+
+    .patient-card {
+      grid-template-columns: 1fr;
+      text-align: center;
+      gap: $spacing-md;
+
+      .patient-avatar {
+        margin: 0 auto;
+      }
+
+      .patient-info {
+        .patient-contact {
+          flex-direction: column;
+          align-items: center;
+          gap: $spacing-sm;
+        }
+      }
+
+      .patient-actions {
+        justify-content: center;
+      }
+    }
   }
 }
