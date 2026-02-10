@@ -1,5 +1,17 @@
 @import "../../styles/variables";
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  flex-wrap: wrap;
+
+  .viewToggles {
+    display: flex;
+    gap: $spacing-sm;
+  }
+}
+
 .appointments-page {
   // Assicuriamoci che la classe sia esportata
   .has-appointments {
@@ -325,7 +337,7 @@
         }
 
         .appointment-status {
-          transform: translateX(-80px);
+          transform: translateX(-100px);
         }
       }
 
@@ -640,6 +652,18 @@
   }
 
   @media (max-width: $mobile) {
+    .actions {
+      width: 100%;
+
+      .viewToggles {
+        display: none; // Nascondi i toggle su mobile (usa sempre lista)
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+
     .appointments-page {
       .page-header {
         flex-direction: column;
