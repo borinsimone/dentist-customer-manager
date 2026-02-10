@@ -6,8 +6,15 @@ import {
   appointmentsService,
   patientsService,
   generateId,
+  reminderSettingsService,
+  reminderLogsService,
 } from '../../services/storage';
-import type { Appointment, Patient } from '../../types';
+import type {
+  Appointment,
+  Patient,
+  ReminderChannel,
+  ReminderLog,
+} from '../../types';
 import styles from './Appointments.module.scss';
 
 type ViewMode = 'calendar' | 'list';
@@ -24,6 +31,9 @@ export const Appointments = () => {
     useState<Appointment | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [preselectedDate, setPreselectedDate] = useState<string | null>(null);
+  const [reminderSettings, setReminderSettings] = useState(
+    reminderSettingsService.get(),
+  );
 
   useEffect(() => {
     loadData();
@@ -43,7 +53,141 @@ export const Appointments = () => {
   const loadData = () => {
     setAppointments(appointmentsService.getAll());
     setPatients(patientsService.getAll());
+    setReminderSettings(reminderSettingsService.get());
   };
+
+  const getPreferredChannel = (patientId: string): ReminderChannel => {
+    const patient = patientsService.getById(patientId);
+    return patient?.reminderChannel || 'email';
+  };
+
+  const sendReminder = async (
+    appointment: Appointment,
+    channel: ReminderChannel,
+    type: 'manual' | 'auto',
+  ): Promise<boolean> => {
+    const now = new Date().toISOString();
+    const status = channel === 'whatsapp' ? 'pending' : 'sent';
+    const patient = patientsService.getById(appointment.patientId);
+    const patientEmail = patient?.email || '';
+    const patientPhone = patient?.phone || '';
+
+    if (channel === 'whatsapp') {
+      const log: ReminderLog = {
+        id: generateId(),
+        appointmentId: appointment.id,
+        patientId: appointment.patientId,
+        patientName: appointment.patientName,
+        channel,
+        type,
+        status,
+        sentAt: now,
+      };
+      reminderLogsService.create(log);
+      appointmentsService.update(appointment.id, {
+        reminderSent: true,
+        reminderSentAt: now,
+        reminderChannel: channel,
+        reminderType: type,
+        reminderStatus: status,
+      });
+      return true;
+    }
+
+    if (channel === 'email' && !patientEmail) {
+      return false;
+    }
+    if (channel === 'sms' && !patientPhone) {
+      return false;
+    }
+
+    try {
+      const response = await fetch('/api/reminders/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channel,
+          patientName: appointment.patientName,
+          patientEmail,
+          patientPhone,
+          appointmentDate: appointment.date,
+          appointmentTime: appointment.time,
+        }),
+      });
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result?.error || 'Invio fallito.');
+      }
+
+      const log: ReminderLog = {
+        id: generateId(),
+        appointmentId: appointment.id,
+        patientId: appointment.patientId,
+        patientName: appointment.patientName,
+        channel,
+        type,
+        status,
+        sentAt: now,
+      };
+      reminderLogsService.create(log);
+      appointmentsService.update(appointment.id, {
+        reminderSent: true,
+        reminderSentAt: now,
+        reminderChannel: channel,
+        reminderType: type,
+        reminderStatus: status,
+      });
+      return true;
+    } catch (error) {
+      console.error('Reminder send error:', error);
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    if (!reminderSettings.autoSendEnabled) {
+      return;
+    }
+
+    const checkAutoReminders = async () => {
+      const now = new Date();
+      const thresholdMs = reminderSettings.hoursBefore * 60 * 60 * 1000;
+      const allAppointments = appointmentsService.getAll();
+      let updated = false;
+
+      for (const appointment of allAppointments) {
+        if (
+          appointment.status === 'cancelled' ||
+          appointment.status === 'completed'
+        ) {
+          continue;
+        }
+        if (appointment.reminderSentAt) {
+          continue;
+        }
+
+        const appointmentDateTime = new Date(
+          `${appointment.date}T${appointment.time}`,
+        );
+        const diff = appointmentDateTime.getTime() - now.getTime();
+
+        if (diff <= thresholdMs && diff > 0) {
+          const channel = getPreferredChannel(appointment.patientId);
+          const sent = await sendReminder(appointment, channel, 'auto');
+          updated = updated || sent;
+        }
+      }
+
+      if (updated) {
+        loadData();
+      }
+    };
+
+    checkAutoReminders();
+    const intervalId = window.setInterval(checkAutoReminders, 60000);
+    return () => window.clearInterval(intervalId);
+  }, [reminderSettings.autoSendEnabled, reminderSettings.hoursBefore]);
 
   const filteredAppointments = appointments
     .filter((apt) => filterStatus === 'all' || apt.status === filterStatus)
@@ -219,14 +363,17 @@ const ListView = ({
 
   // Raggruppa appuntamenti per data
   const groupAppointments = (list: Appointment[]) => {
-    return list.reduce((acc, appointment) => {
-      const date = appointment.date;
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(appointment);
-      return acc;
-    }, {} as Record<string, Appointment[]>);
+    return list.reduce(
+      (acc, appointment) => {
+        const date = appointment.date;
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(appointment);
+        return acc;
+      },
+      {} as Record<string, Appointment[]>,
+    );
   };
 
   const groupedUpcoming = groupAppointments(upcomingAppointments);
@@ -235,7 +382,7 @@ const ListView = ({
   // Ordina le date
   const sortedUpcomingDates = Object.keys(groupedUpcoming).sort();
   const sortedPastDates = Object.keys(groupedPast).sort((a, b) =>
-    b.localeCompare(a)
+    b.localeCompare(a),
   );
 
   const getDateLabel = (dateStr: string) => {
@@ -304,7 +451,7 @@ const ListView = ({
   return (
     <div className={styles['list-view']}>
       {sortedUpcomingDates.map((date) =>
-        renderGroup(date, groupedUpcoming[date])
+        renderGroup(date, groupedUpcoming[date]),
       )}
 
       {pastAppointments.length > 0 && (
@@ -323,7 +470,7 @@ const ListView = ({
           {showPast && (
             <div className={styles['past-events-list']}>
               {sortedPastDates.map((date) =>
-                renderGroup(date, groupedPast[date])
+                renderGroup(date, groupedPast[date]),
               )}
             </div>
           )}
@@ -715,7 +862,7 @@ const AppointmentModal = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));

@@ -1,11 +1,15 @@
 // Types per il progetto - preparati per Supabase
 
+export type ReminderChannel = 'email' | 'sms' | 'whatsapp';
+export type ReminderStatus = 'sent' | 'pending';
+
 export interface Patient {
   id: string;
   name: string;
   phone: string;
   email: string;
   clinicalNotes: string;
+  reminderChannel?: ReminderChannel;
   createdAt: string;
   updatedAt: string;
 }
@@ -14,7 +18,7 @@ export interface Document {
   id: string;
   patientId: string;
   fileName: string;
-  fileType: "rx" | "photo" | "pdf" | "other";
+  fileType: 'rx' | 'photo' | 'pdf' | 'other';
   fileUrl: string; // Per ora base64, poi sarà URL Supabase Storage
   uploadDate: string;
   description?: string;
@@ -27,7 +31,7 @@ export interface Treatment {
   description: string;
   cost: number;
   date: string;
-  status: "planned" | "in-progress" | "completed";
+  status: 'planned' | 'in-progress' | 'completed';
 }
 
 export interface Appointment {
@@ -37,13 +41,13 @@ export interface Appointment {
   date: string;
   time: string;
   duration: number; // in minuti
-  status:
-    | "scheduled"
-    | "confirmed"
-    | "cancelled"
-    | "completed";
+  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed';
   notes?: string;
   reminderSent?: boolean;
+  reminderSentAt?: string;
+  reminderChannel?: ReminderChannel;
+  reminderType?: 'manual' | 'auto';
+  reminderStatus?: ReminderStatus;
 }
 
 export interface Quote {
@@ -54,7 +58,7 @@ export interface Quote {
   totalAmount: number;
   createdAt: string;
   validUntil: string;
-  status: "draft" | "sent" | "accepted" | "rejected";
+  status: 'draft' | 'sent' | 'accepted' | 'rejected';
 }
 
 export interface QuoteItem {
@@ -71,7 +75,7 @@ export interface Payment {
   quoteId?: string;
   amount: number;
   date: string;
-  method: "cash" | "card" | "transfer" | "other";
+  method: 'cash' | 'card' | 'transfer' | 'other';
   notes?: string;
 }
 
@@ -81,6 +85,22 @@ export interface TreatmentPrice {
   description: string;
   defaultPrice: number;
   category: string;
+}
+
+export interface ReminderSettings {
+  autoSendEnabled: boolean;
+  hoursBefore: number;
+}
+
+export interface ReminderLog {
+  id: string;
+  appointmentId: string;
+  patientId: string;
+  patientName: string;
+  channel: ReminderChannel;
+  type: 'manual' | 'auto';
+  status: ReminderStatus;
+  sentAt: string;
 }
 
 // Dashboard stats

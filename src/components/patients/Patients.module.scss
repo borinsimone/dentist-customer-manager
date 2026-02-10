@@ -93,6 +93,12 @@
         color: $text-muted;
         font-style: italic;
       }
+
+      .reminder-channel {
+        margin-top: $spacing-sm;
+        font-size: 0.85rem;
+        color: $text-secondary;
+      }
     }
 
     .patient-actions {
@@ -197,7 +203,8 @@
   }
 
   input,
-  textarea {
+  textarea,
+  select {
     width: 100%;
   }
 

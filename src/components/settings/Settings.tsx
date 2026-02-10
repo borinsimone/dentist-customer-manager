@@ -9,8 +9,9 @@ import {
   paymentsService,
   generateId,
   backupData,
+  reminderSettingsService,
 } from '../../services/storage';
-import type { TreatmentPrice } from '../../types';
+import type { TreatmentPrice, ReminderSettings } from '../../types';
 import styles from './Settings.module.scss';
 
 export const Settings = () => {
@@ -18,6 +19,9 @@ export const Settings = () => {
   const [isPriceListOpen, setIsPriceListOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingPrice, setEditingPrice] = useState<TreatmentPrice | null>(null);
+  const [reminderSettings, setReminderSettings] = useState<ReminderSettings>(
+    reminderSettingsService.get(),
+  );
 
   useEffect(() => {
     loadData();
@@ -25,6 +29,7 @@ export const Settings = () => {
 
   const loadData = () => {
     setTreatmentPrices(treatmentPricesService.getAll());
+    setReminderSettings(reminderSettingsService.get());
   };
 
   const handleAddPrice = () => {
@@ -45,6 +50,11 @@ export const Settings = () => {
   const handleSave = () => {
     loadData();
     handleCloseModal();
+  };
+
+  const handleReminderSettingChange = (updates: Partial<ReminderSettings>) => {
+    const updated = reminderSettingsService.update(updates);
+    setReminderSettings(updated);
   };
 
   const handleTogglePriceList = () => {
@@ -74,6 +84,19 @@ export const Settings = () => {
       currency: 'EUR',
     }).format(amount);
   };
+
+  const reminderAutoOptions = [
+    {
+      value: true,
+      label: 'Attivo',
+      description: 'Invio automatico abilitato',
+    },
+    {
+      value: false,
+      label: 'Disattivo',
+      description: 'Solo invio manuale',
+    },
+  ];
 
   // Statistiche sistema
   const stats = {
@@ -204,6 +227,80 @@ export const Settings = () => {
             </div>
           </div>
 
+          {/* Promemoria */}
+          <div className={styles.section}>
+            <div className={styles['section-header']}>
+              <div className={styles['section-title']}>
+                <h2>🔔 Promemoria Appuntamenti</h2>
+                <span className={styles['section-subtitle']}>
+                  Invio automatico e forzato
+                </span>
+              </div>
+            </div>
+            <div className={styles['section-body']}>
+              <div className={`${styles['form-row']} ${styles['two-columns']}`}>
+                <div className={styles['form-group']}>
+                  <label>Invio automatico</label>
+                  <div className={styles['option-list']}>
+                    {reminderAutoOptions.map((option) => (
+                      <button
+                        key={option.label}
+                        type='button'
+                        className={`${styles['option-item']} ${
+                          reminderSettings.autoSendEnabled === option.value
+                            ? styles.active
+                            : ''
+                        }`}
+                        onClick={() =>
+                          handleReminderSettingChange({
+                            autoSendEnabled: option.value,
+                          })
+                        }
+                      >
+                        <div className={styles['option-info']}>
+                          <div className={styles['option-title']}>
+                            {option.label}
+                          </div>
+                          <div className={styles['option-description']}>
+                            {option.description}
+                          </div>
+                        </div>
+                        <div className={styles['option-action']}>
+                          {reminderSettings.autoSendEnabled === option.value
+                            ? 'Selezionato'
+                            : 'Seleziona'}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles['form-group']}>
+                  <label htmlFor='reminderHours'>Preavviso (ore)</label>
+                  <input
+                    type='number'
+                    id='reminderHours'
+                    min={1}
+                    max={168}
+                    value={reminderSettings.hoursBefore}
+                    onChange={(e) =>
+                      handleReminderSettingChange({
+                        hoursBefore: Math.max(
+                          1,
+                          Math.min(168, Number(e.target.value) || 1),
+                        ),
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <div className={styles['reminder-hint']}>
+                I promemoria automatici usano il canale preferito del paziente
+                (Email/SMS/WhatsApp).
+              </div>
+            </div>
+          </div>
+
           {/* Informazioni App */}
           <div className={styles.section}>
             <div className={styles['section-header']}>
@@ -260,6 +357,16 @@ const TreatmentPriceModal = ({
   onClose,
   onSave,
 }: TreatmentPriceModalProps) => {
+  const categoryOptions = [
+    { value: 'generale', label: 'Generale' },
+    { value: 'igiene', label: 'Igiene' },
+    { value: 'conservativa', label: 'Conservativa' },
+    { value: 'endodonzia', label: 'Endodonzia' },
+    { value: 'protesi', label: 'Protesi' },
+    { value: 'chirurgia', label: 'Chirurgia' },
+    { value: 'ortodonzia', label: 'Ortodonzia' },
+    { value: 'altro', label: 'Altro' },
+  ];
   const [formData, setFormData] = useState({
     name: price?.name || '',
     description: price?.description || '',
@@ -394,21 +501,34 @@ const TreatmentPriceModal = ({
             >
               <div className={styles['form-group']}>
                 <label htmlFor='category'>Categoria</label>
-                <select
-                  id='category'
-                  name='category'
-                  value={formData.category}
-                  onChange={handleChange}
-                >
-                  <option value='generale'>Generale</option>
-                  <option value='igiene'>Igiene</option>
-                  <option value='conservativa'>Conservativa</option>
-                  <option value='endodonzia'>Endodonzia</option>
-                  <option value='protesi'>Protesi</option>
-                  <option value='chirurgia'>Chirurgia</option>
-                  <option value='ortodonzia'>Ortodonzia</option>
-                  <option value='altro'>Altro</option>
-                </select>
+                <div className={styles['option-list']}>
+                  {categoryOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type='button'
+                      className={`${styles['option-item']} ${
+                        formData.category === option.value ? styles.active : ''
+                      }`}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          category: option.value,
+                        }))
+                      }
+                    >
+                      <div className={styles['option-info']}>
+                        <div className={styles['option-title']}>
+                          {option.label}
+                        </div>
+                      </div>
+                      <div className={styles['option-action']}>
+                        {formData.category === option.value
+                          ? 'Selezionato'
+                          : 'Seleziona'}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className={styles['form-group']}>

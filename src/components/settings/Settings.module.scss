@@ -135,6 +135,68 @@
     margin-bottom: $spacing-md;
   }
 
+  .two-columns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reminder-hint {
+    font-size: 0.85rem;
+    color: $text-secondary;
+  }
+
+  .option-list {
+    display: grid;
+    gap: $spacing-sm;
+  }
+
+  .option-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-md;
+    width: 100%;
+    padding: $spacing-md;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-md;
+    background-color: $bg-white;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: $shadow-sm;
+    }
+
+    &.active {
+      border-color: $primary-color;
+      background-color: $primary-light;
+    }
+  }
+
+  .option-info {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  .option-title {
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  .option-description {
+    font-size: 0.85rem;
+    color: $text-secondary;
+  }
+
+  .option-action {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $primary-color;
+    white-space: nowrap;
+  }
+
   .empty-state {
     text-align: center;
     padding: $spacing-2xl;
